@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.constants.AppConstants;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.util.List;
@@ -19,47 +20,37 @@ public class ItemController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ItemDto create(@RequestBody @Valid ItemDto itemDto,
-                          @RequestHeader("X-Sharer-User-Id") long userId) {
+                          @RequestHeader(AppConstants.UserIdHeader) long userId) {
         log.info("От пользователя {} получен запрос POST /items: {}", userId, itemDto);
-        final ItemDto createdItemDto = itemService.create(userId, itemDto);
-        log.info("Отправлен ответ POST /items: {}", createdItemDto);
-        return createdItemDto;
+        return itemService.create(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto update(@RequestBody ItemDto itemDto,
                           @PathVariable long itemId,
-                          @RequestHeader("X-Sharer-User-Id") long userId) {
+                          @RequestHeader(AppConstants.UserIdHeader) long userId) {
         log.info("От пользователя {} получен запрос PATCH /items/{}: {}", userId, itemId, itemDto);
-        final ItemDto updatedItemDto = itemService.update(userId, itemId, itemDto);
-        log.info("Отправлен ответ PATCH /items/{}: {}", itemId, updatedItemDto);
-        return updatedItemDto;
+        return itemService.update(userId, itemId, itemDto);
     }
 
     @GetMapping("/{itemId}")
     public ItemDto get(@PathVariable long itemId,
-                       @RequestHeader("X-Sharer-User-Id") long userId) {
+                       @RequestHeader(AppConstants.UserIdHeader) long userId) {
         log.info("От пользователя {} получен запрос GET /items/{}", userId, itemId);
-        final ItemDto itemDto = itemService.getById(itemId);
-        log.info("Отправлен ответ GET /items/{}: {}", itemId, itemDto);
-        return itemDto;
+        return itemService.getById(itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllByUser(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDto> getAllByUser(@RequestHeader(AppConstants.UserIdHeader) long userId) {
         log.info("От пользователя {} получен запрос GET /items", userId);
-        final List<ItemDto> itemDtoList = itemService.getAllByUser(userId);
-        log.info("Отправлен ответ GET /items: {}", itemDtoList);
-        return itemDtoList;
+        return itemService.getAllByUser(userId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItemsForBooking(@RequestHeader("X-Sharer-User-Id") long userId,
+    public List<ItemDto> searchItemsForBooking(@RequestHeader(AppConstants.UserIdHeader) long userId,
                                                @RequestParam("text") String text) {
         log.info("От  пользователя {} получен запрос GET /items/search с параметром поиска = {}", userId, text);
-        List<ItemDto> itemDtoList = itemService.searchAvailable(text);
-        log.info("Отправлен ответ GET /items/search: {}", itemDtoList);
-        return itemDtoList;
+        return itemService.searchAvailable(text);
     }
 }
 

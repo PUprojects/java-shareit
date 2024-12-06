@@ -21,35 +21,27 @@ public class UserController {
     @GetMapping
     public List<UserDto> getAllUsers() {
         log.info("Получен запрос GET /users");
-        List<UserDto> users = userService.getAll();
-        log.info("Отправлен ответ GET /users. Всего {} пользователей : {}", users.size(), users);
-        return users;
+        return userService.getAll();
     }
 
     @GetMapping("/{id}")
     public UserDto get(@PathVariable long id) {
         log.info("Получен запрос GET /users/{}", id);
-        UserDto user = userService.getById(id);
-        log.info("Отправлен ответ GET /users/{}: {}", id, user);
-        return user;
+        return userService.getById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto create(@RequestBody @Valid UserDto userDto) {
         log.info("Получен запрос POST /users: {}", userDto);
-        UserDto newUser = userService.create(userDto);
-        log.info("Отправлен ответ POST /users: {}", newUser);
-        return newUser;
+        return userService.create(userDto);
     }
 
     @PatchMapping("/{id}")
     public UserDto update(@PathVariable long id,
                           @RequestBody UserDto userDto) {
         log.info("Получен запрос PATCH /users/{}: {}", id, userDto);
-        UserDto updateUser = userService.update(id, userDto);
-        log.info("Отправлен ответ PATCH /users/{}: {}", id, updateUser);
-        return updateUser;
+        return userService.update(id, userDto);
     }
 
     @DeleteMapping("/{id}")
@@ -57,6 +49,5 @@ public class UserController {
     void delete(@PathVariable long id) {
         log.info("Получен запрос DELETE /users/{}", id);
         userService.delete(id);
-        log.info("Запрос DELETE /users/{} обработан", id);
     }
 }
