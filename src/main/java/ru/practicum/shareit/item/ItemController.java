@@ -1,12 +1,15 @@
 package ru.practicum.shareit.item;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.constants.AppConstants;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingAndCommentsDto;
 
 import java.util.List;
 
@@ -34,10 +37,10 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto get(@PathVariable long itemId,
-                       @RequestHeader(AppConstants.UserIdHeader) long userId) {
+    public ItemWithBookingAndCommentsDto get(@PathVariable long itemId,
+                                             @RequestHeader(AppConstants.UserIdHeader) long userId) {
         log.info("От пользователя {} получен запрос GET /items/{}", userId, itemId);
-        return itemService.getById(itemId);
+        return itemService.getByIdWithBookingsAndComments(itemId);
     }
 
     @GetMapping
@@ -49,8 +52,18 @@ public class ItemController {
     @GetMapping("/search")
     public List<ItemDto> searchItemsForBooking(@RequestHeader(AppConstants.UserIdHeader) long userId,
                                                @RequestParam("text") String text) {
-        log.info("От  пользователя {} получен запрос GET /items/search с параметром поиска = {}", userId, text);
+        log.info("От пользователя {} получен запрос GET /items/search с параметром поиска = {}", userId, text);
         return itemService.searchAvailable(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDto addComment(@PathVariable long itemId,
+                                 @RequestBody @NotBlank @Valid String commentText,
+                                 @RequestHeader(AppConstants.UserIdHeader) long userId) {
+        log.info("От пользователя {} получен запрос POST /items/{}/comment: {}", userId, itemId, commentText);
+
+        return itemService.addComment(itemId, userId, commentText);
     }
 }
 

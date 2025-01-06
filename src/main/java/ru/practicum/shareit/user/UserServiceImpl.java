@@ -16,14 +16,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAll() {
-        return userRepository.getAll().stream()
+        return userRepository.findAll().stream()
                 .map(UserMapper::toUserDto)
                 .toList();
     }
 
     @Override
     public UserDto getById(long userId) {
-        return UserMapper.toUserDto(userRepository.getById(userId)
+        return UserMapper.toUserDto(userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Поользователь " + userId + " не найден")));
     }
 
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     public UserDto create(UserDto userDto) {
         validateUniqueUser(null, userDto.getEmail());
         return UserMapper.toUserDto(
-                userRepository.create(
+                userRepository.save(
                         UserMapper.toUser(userDto)));
     }
 
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
         if (userDto.getEmail() != null) {
             user.setEmail(userDto.getEmail());
         }
-        userRepository.update(user);
+        userRepository.save(user);
         return UserMapper.toUserDto(user);
     }
 
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateUniqueUser(Long id, String email) {
-        userRepository.getByEmail(email).ifPresent(user -> {
+        userRepository.findByEmail(email).ifPresent(user -> {
             if ((id == null) || (id != user.getId())) {
                 throw new AlreadyExistException("Пользователь с почтой " + email + " уже существует");
             }
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public User getUserById(long userId) {
-        return userRepository.getById(userId)
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Поользователь " + userId + " не найден"));
     }
 }
