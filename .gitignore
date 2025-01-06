@@ -1,5 +1,6 @@
 HELP.md
 compose.yaml
+checkstyle.xml
 target/
 volumes/
 !.mvn/wrapper/maven-wrapper.jar
