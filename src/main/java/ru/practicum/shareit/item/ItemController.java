@@ -10,6 +10,7 @@ import ru.practicum.shareit.constants.AppConstants;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingAndCommentsDto;
+import ru.practicum.shareit.item.dto.NewCommentDto;
 
 import java.util.List;
 
@@ -59,11 +60,11 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto addComment(@PathVariable long itemId,
-                                 @RequestBody @NotBlank @Valid String commentText,
+                                 @RequestBody NewCommentDto comment,
                                  @RequestHeader(AppConstants.UserIdHeader) long userId) {
-        log.info("От пользователя {} получен запрос POST /items/{}/comment: {}", userId, itemId, commentText);
+        log.info("От пользователя {} получен запрос POST /items/{}/comment: {}", userId, itemId, comment);
 
-        return itemService.addComment(itemId, userId, commentText);
+        return itemService.addComment(itemId, userId, comment.getText());
     }
 }
 
