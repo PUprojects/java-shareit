@@ -63,7 +63,7 @@ public class ItemController {
                                  @RequestHeader(AppConstants.UserIdHeader) long userId) {
         log.info("От пользователя {} получен запрос POST /items/{}/comment: {}", userId, itemId, comment);
 
-        return itemService.addComment(itemId, userId, comment.getText());
+        return itemService.addComment(itemId, userId, comment.text());
     }
 }
 
