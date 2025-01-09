@@ -30,11 +30,14 @@ public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
+    private final ItemMapper itemMapper;
+    private final BookingMapper bookingMapper;
 
     @Override
     public List<ItemDto> getAllByUser(long userId) {
         return itemRepository.findByOwner(userId).stream()
-                .map(ItemMapper::toItemDto)
+                .map(itemMapper::toItemDto)
                 .toList();
     }
 
@@ -44,31 +47,31 @@ public class ItemServiceImpl implements ItemService {
 
         Booking lastBooking = bookingRepository.findByItem_IdAndStartIsBeforeOrderByStartDesc(item.getOwner().getId(),
                 LocalDateTime.now());
-        BookingDto lastBookingDto = (lastBooking == null) ? null : BookingMapper.toBookingDto(lastBooking);
+        BookingDto lastBookingDto = (lastBooking == null) ? null : bookingMapper.toBookingDto(lastBooking);
 
         Booking nextBooking = bookingRepository.findByItem_IdAndEndIsAfterOrderByEnd(item.getOwner().getId(),
                 LocalDateTime.now());
-        BookingDto nextBookingDto = (nextBooking == null) ? null : BookingMapper.toBookingDto(nextBooking);
+        BookingDto nextBookingDto = (nextBooking == null) ? null : bookingMapper.toBookingDto(nextBooking);
 
         List<CommentDto> comments = commentRepository.findAllByItem_Id(id).stream()
-                .map(CommentMapper::toCommentDto)
+                .map(commentMapper::toCommentDto)
                 .toList();
 
-        return ItemMapper.toItemWithBookingAndCommentsDto(item, lastBookingDto, nextBookingDto, comments);
+        return itemMapper.toItemWithBookingAndCommentsDto(item, lastBookingDto, nextBookingDto, comments);
     }
 
     @Override
     public ItemDto getById(long id) {
-        return ItemMapper.toItemDto(itemRepository.findById(id)
+        return itemMapper.toItemDto(itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Вещь " + id + " не найдена")));
     }
 
     @Override
     public ItemDto create(long ownerId, ItemDto itemDto) {
-        Item item = ItemMapper.toItem(itemDto);
+        Item item = itemMapper.toItem(itemDto);
         User user = userService.getUserById(ownerId);
         item.setOwner(user);
-        return ItemMapper.toItemDto(itemRepository.save(item));
+        return itemMapper.toItemDto(itemRepository.save(item));
     }
 
     @Override
@@ -79,20 +82,20 @@ public class ItemServiceImpl implements ItemService {
             throw new AccessDeniedException("Пользователь " + userId + " не является хозяином вещи");
         }
 
-        if (itemDto.getName() != null) {
-            item.setName(itemDto.getName());
+        if (itemDto.name() != null) {
+            item.setName(itemDto.name());
         }
 
-        if (itemDto.getDescription() != null) {
-            item.setDescription(itemDto.getDescription());
+        if (itemDto.description() != null) {
+            item.setDescription(itemDto.description());
         }
 
-        if (itemDto.getAvailable() != null) {
-            item.setAvailable(itemDto.getAvailable());
+        if (itemDto.available() != null) {
+            item.setAvailable(itemDto.available());
         }
 
         itemRepository.save(item);
-        return ItemMapper.toItemDto(item);
+        return itemMapper.toItemDto(item);
     }
 
     @Override
@@ -106,7 +109,7 @@ public class ItemServiceImpl implements ItemService {
         if (searchString.isEmpty())
             return List.of();
         return itemRepository.search(searchString, true).stream()
-                .map(ItemMapper::toItemDto)
+                .map(itemMapper::toItemDto)
                 .toList();
     }
 
@@ -134,6 +137,6 @@ public class ItemServiceImpl implements ItemService {
         comment.setAuthor(author);
         comment.setCreated(LocalDateTime.now());
 
-        return CommentMapper.toCommentDto(commentRepository.save(comment));
+        return commentMapper.toCommentDto(commentRepository.save(comment));
     }
 }

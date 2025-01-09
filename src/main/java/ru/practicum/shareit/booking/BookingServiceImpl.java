@@ -26,13 +26,14 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserService userService;
     private final ItemService itemService;
+    private final BookingMapper bookingMapper;
 
     @Override
     public BookingDto create(NewBookingDto newBookingDto, long bookerId) {
         User booker = userService.getUserById(bookerId);
-        Item item = itemService.getItemById(newBookingDto.getItemId());
+        Item item = itemService.getItemById(newBookingDto.itemId());
 
-        if (!newBookingDto.getEnd().isAfter(newBookingDto.getStart())) {
+        if (!newBookingDto.end().isAfter(newBookingDto.start())) {
             throw new InvalidBookingDateException("Дата завершения бронирования должна быть позже даты начала");
         }
 
@@ -41,13 +42,13 @@ public class BookingServiceImpl implements BookingService {
         }
 
         Booking booking = new Booking();
-        booking.setStart(newBookingDto.getStart());
-        booking.setEnd(newBookingDto.getEnd());
+        booking.setStart(newBookingDto.start());
+        booking.setEnd(newBookingDto.end());
         booking.setBooker(booker);
         booking.setItem(item);
         booking.setStatus(BookingStatus.WAITING);
 
-        return BookingMapper.toBookingDto(bookingRepository.save(booking));
+        return bookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
     @Override
@@ -60,7 +61,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(isAvailable ? BookingStatus.APPROVED : BookingStatus.REJECTED);
         bookingRepository.save(booking);
 
-        return BookingMapper.toBookingDto(booking);
+        return bookingMapper.toBookingDto(booking);
     }
 
     @Override
@@ -77,7 +78,7 @@ public class BookingServiceImpl implements BookingService {
             throw new AccessDeniedException("Пользователю " + userId + " доступ к бронированию запрещён");
         }
 
-        return BookingMapper.toBookingDto(booking);
+        return bookingMapper.toBookingDto(booking);
     }
 
     @Override
@@ -107,33 +108,33 @@ public class BookingServiceImpl implements BookingService {
         return switch (status.toUpperCase()) {
             case "ALL" -> bookings
                     .stream()
-                    .map(BookingMapper::toBookingDto)
+                    .map(bookingMapper::toBookingDto)
                     .toList();
             case "CURRENT" -> bookings
                     .stream()
                     .filter(booking -> (booking.getStart().isBefore(LocalDateTime.now()) &&
                             (!booking.getEnd().isBefore(LocalDateTime.now()))))
-                    .map(BookingMapper::toBookingDto)
+                    .map(bookingMapper::toBookingDto)
                     .toList();
             case "PAST" -> bookings
                     .stream()
                     .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
-                    .map(BookingMapper::toBookingDto)
+                    .map(bookingMapper::toBookingDto)
                     .toList();
             case "FUTURE" -> bookings
                     .stream()
                     .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
-                    .map(BookingMapper::toBookingDto)
+                    .map(bookingMapper::toBookingDto)
                     .toList();
             case "WAITING" -> bookings
                     .stream()
                     .filter(booking -> booking.getStatus() == BookingStatus.WAITING)
-                    .map(BookingMapper::toBookingDto)
+                    .map(bookingMapper::toBookingDto)
                     .toList();
             case "REJECTED" -> bookings
                     .stream()
                     .filter(booking -> booking.getStatus() == BookingStatus.REJECTED)
-                    .map(BookingMapper::toBookingDto)
+                    .map(bookingMapper::toBookingDto)
                     .toList();
             default -> List.of();
         };

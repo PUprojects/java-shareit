@@ -13,46 +13,47 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     public List<UserDto> getAll() {
         return userRepository.findAll().stream()
-                .map(UserMapper::toUserDto)
+                .map(userMapper::toUserDto)
                 .toList();
     }
 
     @Override
     public UserDto getById(long userId) {
-        return UserMapper.toUserDto(userRepository.findById(userId)
+        return userMapper.toUserDto(userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Поользователь " + userId + " не найден")));
     }
 
     @Override
     public UserDto create(UserDto userDto) {
-        validateUniqueUser(null, userDto.getEmail());
-        return UserMapper.toUserDto(
+        validateUniqueUser(null, userDto.email());
+        return userMapper.toUserDto(
                 userRepository.save(
-                        UserMapper.toUser(userDto)));
+                        userMapper.toUser(userDto)));
     }
 
     @Override
     public UserDto update(long userId, UserDto userDto) {
         User user = getUserById(userId);
-        validateUniqueUser(userId, userDto.getEmail());
+        validateUniqueUser(userId, userDto.email());
         user.setId(userId);
-        if (userDto.getName() != null) {
-            user.setName(userDto.getName());
+        if (userDto.name() != null) {
+            user.setName(userDto.name());
         }
-        if (userDto.getEmail() != null) {
-            user.setEmail(userDto.getEmail());
+        if (userDto.email() != null) {
+            user.setEmail(userDto.email());
         }
         userRepository.save(user);
-        return UserMapper.toUserDto(user);
+        return userMapper.toUserDto(user);
     }
 
     @Override
     public void delete(long userId) {
-        User user = UserMapper.toUser(getById(userId));
+        User user = userMapper.toUser(getById(userId));
         userRepository.delete(user);
     }
 
