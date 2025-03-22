@@ -42,7 +42,7 @@ class BookingServiceImplIT {
 
     @Test
     @DisplayName("create должна создаватьнового пользователя в базе данных")
-    void createShouldCreateNewUserInDatabase() {
+    void createShouldCreateNewBookingInDatabase() {
         NewBookingDto newBookingDto = new NewBookingDto(1, LocalDateTime.now().plusHours(1),
                 LocalDateTime.now().plusHours(2));
 
@@ -57,23 +57,4 @@ class BookingServiceImplIT {
         assertEquals(newBookingDtoFromDB.getItem().getId(), newBookingDto.itemId());
     }
 
-    @Test
-    void approve() {
-    }
-
-    @Test
-    void findBookingById() {
-    }
-
-    @Test
-    void findById() {
-    }
-
-    @Test
-    void getByState() {
-    }
-
-    @Test
-    void getByOwnerAndState() {
-    }
 }

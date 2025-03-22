@@ -47,11 +47,11 @@ public class ItemServiceImpl implements ItemService {
     public ItemWithBookingAndCommentsDto getByIdWithBookingsAndComments(long id) {
         Item item = getItemById(id);
 
-        Booking lastBooking = bookingRepository.findByItem_IdAndStartIsBeforeOrderByStartDesc(item.getOwner().getId(),
+        Booking lastBooking = bookingRepository.findByItem_IdAndStartIsBeforeOrderByStartDesc(item.getId(),
                 LocalDateTime.now());
         BookingDto lastBookingDto = (lastBooking == null) ? null : bookingMapper.toBookingDto(lastBooking);
 
-        Booking nextBooking = bookingRepository.findByItem_IdAndEndIsAfterOrderByEnd(item.getOwner().getId(),
+        Booking nextBooking = bookingRepository.findByItem_IdAndEndIsAfterOrderByEnd(item.getId(),
                 LocalDateTime.now());
         BookingDto nextBookingDto = (nextBooking == null) ? null : bookingMapper.toBookingDto(nextBooking);
 
