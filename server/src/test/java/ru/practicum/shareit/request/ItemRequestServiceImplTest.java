@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ItemRequestServiceImplTest {
@@ -70,17 +73,17 @@ class ItemRequestServiceImplTest {
     void shouldCreateNewItemRequest() {
         User requester = new User(1, "Test user 1", "user@mail.ru");
 
-        Mockito.when(userService.getUserById(Mockito.anyLong()))
+        when(userService.getUserById(Mockito.anyLong()))
                 .thenReturn(requester);
 
-        Mockito.when(itemRequestRepository.save(Mockito.any(ItemRequest.class)))
+        when(itemRequestRepository.save(any(ItemRequest.class)))
                 .thenAnswer(argument -> {
                     ItemRequest itemRequest = argument.getArgument(0, ItemRequest.class);
                     itemRequest.setId(1);
                     return itemRequest;
                 });
 
-        Mockito.when(itemRequestMapper.toItemRequestDto(Mockito.any(ItemRequest.class)))
+        when(itemRequestMapper.toItemRequestDto(any(ItemRequest.class)))
                 .thenAnswer(argument -> {
                     ItemRequest itemRequest = argument.getArgument(0, ItemRequest.class);
                    return new ItemRequestDto(itemRequest.getId(), itemRequest.getDescription(),
@@ -96,10 +99,10 @@ class ItemRequestServiceImplTest {
         assertEquals("New request", itemRequestDto.description());
         assertNotNull(itemRequestDto.created());
 
-        Mockito.verify(userService, Mockito.times(1))
+        verify(userService, times(1))
                 .getUserById(1);
-        Mockito.verify(itemRequestRepository, Mockito.times(1))
-                .save(Mockito.any(ItemRequest.class));
+        verify(itemRequestRepository, times(1))
+                .save(any(ItemRequest.class));
 
         Mockito.verifyNoMoreInteractions(itemRequestRepository, userService);
     }
@@ -107,7 +110,7 @@ class ItemRequestServiceImplTest {
     @Test
     @DisplayName("Не должен создавать новый запрос при неверно указанном пользователе")
     void shouldNotCreateItemRequestWhenUserInvalid() {
-        Mockito.when(userService.getUserById(Mockito.anyLong()))
+        when(userService.getUserById(Mockito.anyLong()))
                 .thenThrow(new NotFoundException("Пользователь не найден"));
 
         NewItemRequestDto newItemRequestDto = new NewItemRequestDto("New request");
@@ -126,10 +129,10 @@ class ItemRequestServiceImplTest {
                 new ItemRequest(2, "Second request", requestTime.minusHours(1), requester)
         );
 
-        Mockito.when(itemRequestRepository.findByRequester_id(Mockito.anyLong()))
+        when(itemRequestRepository.findByRequester_id(Mockito.anyLong()))
                 .thenReturn(itemRequests);
 
-        Mockito.when(itemRequestMapper.toItemRequestWithAnswersDto(Mockito.any(ItemRequest.class),Mockito.anyList()))
+        when(itemRequestMapper.toItemRequestWithAnswersDto(any(ItemRequest.class), anyList()))
                 .thenAnswer(arguments -> {
                     ItemRequest request = arguments.getArgument(0, ItemRequest.class);
                     List<RequestAnswerDto> items = arguments.getArgument(1);
@@ -138,9 +141,9 @@ class ItemRequestServiceImplTest {
                             request.getCreated(), items);
                 });
 
-        Mockito.when(itemRepository.findByRequest_id(1))
+        when(itemRepository.findByRequest_id(1))
                 .thenReturn(List.of(new RequestAnswerDtoTestImpl(1, "Item 1", 5)));
-        Mockito.when(itemRepository.findByRequest_id(2)).thenReturn(List.of());
+        when(itemRepository.findByRequest_id(2)).thenReturn(List.of());
 
         List<ItemRequestWithAnswersDto> serviceAnswer = itemRequestService.getAllForUser(1);
 
@@ -161,10 +164,10 @@ class ItemRequestServiceImplTest {
                 new ItemRequest(2, "Second request", requestTime.minusHours(1), requester)
         );
 
-        Mockito.when(itemRequestRepository.findByRequester_idNot(Mockito.anyLong()))
+        when(itemRequestRepository.findByRequester_idNot(Mockito.anyLong()))
                 .thenReturn(itemRequests);
 
-        Mockito.when(itemRequestMapper.toItemRequestDto(Mockito.any(ItemRequest.class)))
+        when(itemRequestMapper.toItemRequestDto(any(ItemRequest.class)))
                 .thenAnswer(argument -> {
                     ItemRequest itemRequest = argument.getArgument(0, ItemRequest.class);
                     return new ItemRequestDto(itemRequest.getId(), itemRequest.getDescription(),
@@ -183,10 +186,10 @@ class ItemRequestServiceImplTest {
     void shouldReturnItemRequestById() {
         User requester = new User(1, "Test user 1", "user@mail.ru");
 
-        Mockito.when(itemRequestRepository.findById(1L))
+        when(itemRequestRepository.findById(1L))
                 .thenReturn(Optional.of(new ItemRequest(1, "First request", LocalDateTime.now(), requester)));
 
-        Mockito.when(itemRequestMapper.toItemRequestWithAnswersDto(Mockito.any(ItemRequest.class),Mockito.anyList()))
+        when(itemRequestMapper.toItemRequestWithAnswersDto(any(ItemRequest.class), anyList()))
                 .thenAnswer(arguments -> {
                     ItemRequest request = arguments.getArgument(0, ItemRequest.class);
                     List<RequestAnswerDto> items = arguments.getArgument(1);
@@ -195,7 +198,7 @@ class ItemRequestServiceImplTest {
                             request.getCreated(), items);
                 });
 
-        Mockito.when(itemRepository.findByRequest_id(1))
+        when(itemRepository.findByRequest_id(1))
                 .thenReturn(List.of(new RequestAnswerDtoTestImpl(1, "Item 1", 5)));
 
         ItemRequestWithAnswersDto serviceAnswer = itemRequestService.getById(1);
@@ -204,5 +207,15 @@ class ItemRequestServiceImplTest {
         assertEquals("First request", serviceAnswer.description());
         assertEquals(1, serviceAnswer.items().size());
         assertEquals("Item 1", serviceAnswer.items().getFirst().getName());
+    }
+
+    @Test
+    void getByIdShouldThrowExceptionWhenRequestNotFound() {
+        when(itemRequestRepository.findById(5L)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> itemRequestService.getById(5L));
+
+        verify(itemRequestRepository, times(1)).findById(5L);
+        verifyNoMoreInteractions(itemRequestRepository);
     }
 }

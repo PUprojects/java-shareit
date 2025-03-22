@@ -13,14 +13,14 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ItemMapper {
-    @Mapping(target = "requestId", ignore = true)
+    @Mapping(target = "requestId", source = "request.id")
     ItemDto toItemDto(Item item);
 
     @Mapping(target = "request", ignore = true)
     @Mapping(target = "owner", ignore = true)
     Item toItem(ItemDto itemDto);
 
-    @Mapping(target = "requestId", ignore = true)
+    @Mapping(target = "requestId", source = "item.request.id")
     @Mapping(target = "id", source = "item.id")
     ItemWithBookingAndCommentsDto toItemWithBookingAndCommentsDto(Item item, BookingDto lastBooking,
                                                                   BookingDto nextBooking,

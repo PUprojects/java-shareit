@@ -151,7 +151,7 @@ class BookingControllerIT {
 
     @Test
     @DisplayName("getByOwnerAndState должна возвращать бронирования вещей указанного пользователя")
-    void shouldGetBookingsByOwnerId() throws Exception{
+    void shouldGetBookingsByOwnerId() throws Exception {
         when(bookingService.getByOwnerAndState(any(), anyLong()))
                 .thenReturn(bookings);
 

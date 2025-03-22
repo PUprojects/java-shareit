@@ -58,7 +58,6 @@ class RequestControllerTest {
     private final List<ItemRequestDto> requests = List.of(
             new ItemRequestDto("First Request"),
             new ItemRequestDto("Second Request"));
-    
     MockMvc mvc;
 
     @BeforeEach
@@ -147,7 +146,7 @@ class RequestControllerTest {
 
     @Test
     @DisplayName("getUserRequests не должна возвращать данные когда не указан id пользователя")
-    void shouldNotGetAllRequestsByUserIdtWhenUserIdNotSent() throws Exception{
+    void shouldNotGetAllRequestsByUserIdtWhenUserIdNotSent() throws Exception {
         RequestBuilder request = get("/requests")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON);
@@ -182,7 +181,7 @@ class RequestControllerTest {
 
     @Test
     @DisplayName("getAllItemsRequests не должна возвращать данные когда не указан id пользователя")
-    void shouldNotGetAllRequestsForOtherUserIdtWhenUserIdNotSent() throws Exception{
+    void shouldNotGetAllRequestsForOtherUserIdtWhenUserIdNotSent() throws Exception {
         RequestBuilder request = get("/requests/all")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON);
@@ -195,7 +194,7 @@ class RequestControllerTest {
 
     @Test
     @DisplayName("getItemRequestById должна вернуть запрос по указанному id")
-    void shouldGetRequestById() throws Exception{
+    void shouldGetRequestById() throws Exception {
         when(requestClient.getById(2, 3))
                 .thenReturn(ResponseEntity.ok().body(requests.getFirst()));
 
@@ -215,7 +214,7 @@ class RequestControllerTest {
 
     @Test
     @DisplayName("getItemRequestById не должна возвращать данные когда не указан id пользователя")
-    void shouldNotGetRequestByIdtWhenUserIdNotSent() throws Exception{
+    void shouldNotGetRequestByIdtWhenUserIdNotSent() throws Exception {
         RequestBuilder request = get("/requests/3")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON);

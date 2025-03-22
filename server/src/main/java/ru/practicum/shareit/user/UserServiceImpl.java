@@ -53,11 +53,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(long userId) {
-        User user = userMapper.toUser(getById(userId));
+        User user = getUserById(userId);
         userRepository.delete(user);
     }
 
     private void validateUniqueUser(Long id, String email) {
+        if (email == null) {
+            return;
+        }
+
         userRepository.findByEmail(email).ifPresent(user -> {
             if ((id == null) || (id != user.getId())) {
                 throw new AlreadyExistException("Пользователь с почтой " + email + " уже существует");

@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Data
 public class BookingDto {
     long id;
 

@@ -12,6 +12,8 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,7 +47,7 @@ class UserServiceImplTest {
         assertEquals(result.getFirst(), expectedUserDto, "Возвращённые данные не соответсвуют ожидаемым");
         verify(userMapper, times(1)).toUserDto(expectedUser);
         verify(userRepository, times(1)).findAll();
-        verifyNoMoreInteractions(userMapper, userService);
+        verifyNoMoreInteractions(userMapper, userRepository);
     }
 
     @Test
@@ -70,7 +72,7 @@ class UserServiceImplTest {
 
         NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.getById(1));
 
-        assertEquals(exception.getMessage(), "Поользователь 1 не найден");
+        assertEquals("Поользователь 1 не найден", exception.getMessage());
         verify(userRepository, times(1)).findById(1);
         verifyNoMoreInteractions(userRepository);
         verifyNoInteractions(userMapper);
@@ -103,7 +105,7 @@ class UserServiceImplTest {
         when(userRepository.findByEmail("email")).thenReturn(Optional.of(user));
 
         AlreadyExistException exception = assertThrows(AlreadyExistException.class, () -> userService.create(userDto));
-        assertEquals(exception.getMessage(), "Пользователь с почтой email уже существует");
+        assertEquals("Пользователь с почтой email уже существует", exception.getMessage());
         verify(userRepository, times(1)).findByEmail("email");
         verifyNoMoreInteractions(userMapper, userRepository);
     }
@@ -121,13 +123,118 @@ class UserServiceImplTest {
         User updatedUser = userArgumentCaptor.getValue();
         assertEquals(updatedUser.getName(), newUser.getName(), "Имя пользователя не обновлено");
         assertEquals(updatedUser.getEmail(), newUser.getEmail(), "Почта пользователя не обновлена");
+        verify(userRepository, times(1)).findByEmail("newMail");
+        verifyNoMoreInteractions(userRepository);
     }
 
     @Test
-    void delete() {
+    void updateShouldUpdateUserNameWhenUserFoundAndEmailIsNull() {
+        User oldUser = new User(1L, "oldName", "oldMail");
+        User newUser = new User(1L, "newName", null);
+        UserDto newUserDto = new UserDto(1L, "newName", null);
+        when(userRepository.findById(1)).thenReturn(Optional.of(oldUser));
+
+        userService.update(1, newUserDto);
+
+        verify(userRepository).save(userArgumentCaptor.capture());
+        User updatedUser = userArgumentCaptor.getValue();
+        assertEquals(updatedUser.getName(), newUser.getName(), "Имя пользователя не обновлено");
+        assertEquals(updatedUser.getEmail(), oldUser.getEmail(), "Почта пользователя не должна быть обновлена");
+        verifyNoMoreInteractions(userRepository);
     }
 
     @Test
-    void getUserById() {
+    void updateShouldUpdateUserMailWhenUserFoundAndNameIsNull() {
+        User oldUser = new User(1L, "oldName", "oldMail");
+        User newUser = new User(1L, null, "newMail");
+        UserDto newUserDto = new UserDto(1L, null, "newMail");
+        when(userRepository.findById(1)).thenReturn(Optional.of(oldUser));
+
+        userService.update(1, newUserDto);
+
+        verify(userRepository).save(userArgumentCaptor.capture());
+        User updatedUser = userArgumentCaptor.getValue();
+        assertEquals(updatedUser.getName(), oldUser.getName(), "Имя пользователя не должно быть обновлено");
+        assertEquals(updatedUser.getEmail(), newUser.getEmail(), "Почта пользователя не обновлена");
+        verify(userRepository, times(1)).findByEmail("newMail");
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    void deleteShouldDeleteUserWhenInvoked() {
+        User user = new User(1L, "Name", "email");
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+
+        userService.delete(1L);
+
+        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).delete(user);
+        verifyNoMoreInteractions(userRepository, userMapper);
+    }
+
+    @Test
+    void getUserByIdShouldReturnDataWhenUserFound() {
+        User expectedUser = new User(1L, "Name", "email");
+
+        when(userRepository.findById(1)).thenReturn(Optional.of(expectedUser));
+
+        User result = userService.getUserById(1);
+
+        assertEquals(result, expectedUser, "Возвращённые данные не соответсвуют ожидаемым");
+        verify(userRepository, times(1)).findById(1);
+        verifyNoMoreInteractions(userMapper, userRepository);
+    }
+
+    @Test
+    void getUserByIdShouldThrowExceptionWhenUserNotFound() {
+        when(userRepository.findById(1)).thenReturn(Optional.empty());
+
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> userService.getById(1));
+
+        assertEquals("Поользователь 1 не найден", exception.getMessage());
+        verify(userRepository, times(1)).findById(1);
+        verifyNoMoreInteractions(userMapper, userRepository);
+    }
+
+    @Test
+    void validateUniqueUserShouldThrowExceptionWhenIdIsNullAndEmailNotUnique()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        User user = new User(1, "Name", "email");
+        when(userRepository.findByEmail("email")).thenReturn(Optional.of(user));
+        Method method = UserServiceImpl.class.getDeclaredMethod("validateUniqueUser",
+                Long.class, String.class);
+        method.setAccessible(true);
+
+        try {
+            method.invoke(userService,null, "email");
+            fail("Должно быть выбрашено исключение");
+        } catch (InvocationTargetException e) {
+            assertInstanceOf(AlreadyExistException.class, e.getCause(),
+                    "Должно быть выбрашено исключение AlreadyExistException");
+            assertEquals("Пользователь с почтой email уже существует", e.getCause().getMessage());
+        }
+
+        verify(userRepository,times(1)).findByEmail("email");
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    void validateUniqueUserShouldNotThrowExceptionWhenIdIsSameAndEmailNotUnique()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        User user = new User(1, "Name", "email");
+        when(userRepository.findByEmail("email")).thenReturn(Optional.of(user));
+        Method method = UserServiceImpl.class.getDeclaredMethod("validateUniqueUser",
+                Long.class, String.class);
+        method.setAccessible(true);
+
+        try {
+            method.invoke(userService,1L, "email");
+        } catch (InvocationTargetException e) {
+            fail("Не должно быть выбрашено исключение");
+        }
+
+        verify(userRepository,times(1)).findByEmail("email");
+        verifyNoMoreInteractions(userRepository);
     }
 }

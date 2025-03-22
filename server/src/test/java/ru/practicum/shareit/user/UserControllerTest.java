@@ -72,7 +72,7 @@ class UserControllerTest {
 
     @Test
     void deleteShouldCallServiceDeleteWhenInvoked() {
-        userService.delete(1);
+        userController.delete(1);
 
         verify(userService,times(1)).delete(1);
         verifyNoMoreInteractions(userService);

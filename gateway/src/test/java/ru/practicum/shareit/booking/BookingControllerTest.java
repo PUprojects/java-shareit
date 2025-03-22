@@ -210,7 +210,7 @@ class BookingControllerTest {
 
     @Test
     @DisplayName("getByOwnerAndState должна возвращать бронирования вещей указанного пользователя")
-    void shouldGetBookingsByOwnerId() throws Exception{
+    void shouldGetBookingsByOwnerId() throws Exception {
         when(bookingClient.getByOwnerAndState(2, BookingState.ALL))
                 .thenReturn(ResponseEntity.ok().body(bookings));
 
@@ -232,7 +232,7 @@ class BookingControllerTest {
 
     @Test
     @DisplayName("getByOwnerAndState не должна возвращать данные при некорректном статусе в запросе")
-    void shouldNotGetGetBookingsByOwnerIdWhenStatusInvalid() throws Exception{
+    void shouldNotGetGetBookingsByOwnerIdWhenStatusInvalid() throws Exception {
         RequestBuilder request = get("/bookings/owner?state=NONE")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)

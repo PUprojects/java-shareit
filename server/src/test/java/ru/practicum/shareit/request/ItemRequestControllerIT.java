@@ -132,8 +132,8 @@ class ItemRequestControllerIT {
 
     @Test
     @DisplayName("getItemRequestById должна вернуть запрос по указанному id")
-    void shouldGetRequestById() throws Exception{
-        when(itemRequestService.getById( 3))
+    void shouldGetRequestById() throws Exception {
+        when(itemRequestService.getById(3))
                 .thenReturn(itemRequestWithAnswersDtos.getFirst());
 
         RequestBuilder request = get("/requests/3")

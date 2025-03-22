@@ -192,5 +192,4 @@ class ItemControllerIT {
         verify(itemService, times(1)).addComment(anyLong(), anyLong(), any(String.class));
         verifyNoMoreInteractions(itemService);
     }
-
 }
