@@ -48,11 +48,11 @@ public class ItemServiceImpl implements ItemService {
         Item item = getItemById(id);
 
         Booking lastBooking = bookingRepository.findByItem_IdAndStartIsBeforeOrderByStartDesc(item.getId(),
-                LocalDateTime.now());
+                LocalDateTime.now().minusSeconds(10));
         BookingDto lastBookingDto = (lastBooking == null) ? null : bookingMapper.toBookingDto(lastBooking);
 
         Booking nextBooking = bookingRepository.findByItem_IdAndEndIsAfterOrderByEnd(item.getId(),
-                LocalDateTime.now());
+                LocalDateTime.now().plusSeconds(10));
         BookingDto nextBookingDto = (nextBooking == null) ? null : bookingMapper.toBookingDto(nextBooking);
 
         List<CommentDto> comments = commentRepository.findAllByItem_Id(id).stream()
