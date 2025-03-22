@@ -58,7 +58,7 @@ class ItemRequestControllerIT {
                 .thenReturn(itemRequestDtos.getFirst());
 
         RequestBuilder request = post("/requests")
-                .header(AppConstants.UserIdHeader, 22L)
+                .header(AppConstants.USER_ID_HEADER, 22L)
                 .content(mapper.writeValueAsString(newItemRequestDto))
                 .characterEncoding(StandardCharsets.UTF_8)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -85,7 +85,7 @@ class ItemRequestControllerIT {
         RequestBuilder request = get("/requests")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -111,7 +111,7 @@ class ItemRequestControllerIT {
         RequestBuilder request = get("/requests/all")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -139,7 +139,7 @@ class ItemRequestControllerIT {
         RequestBuilder request = get("/requests/3")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())

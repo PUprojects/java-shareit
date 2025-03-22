@@ -21,7 +21,7 @@ public class ItemRequestController {
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public ItemRequestDto addNewRequest(@RequestBody NewItemRequestDto newItemRequestDto,
-                                        @RequestHeader(AppConstants.UserIdHeader) long userId) {
+                                        @RequestHeader(AppConstants.USER_ID_HEADER) long userId) {
         log.info("От пользователя {} получен запрос POST /requests: {}", userId, newItemRequestDto);
         ItemRequestDto result = itemRequestService.add(userId, newItemRequestDto);
         log.info("Получен результат {}", result);
@@ -30,13 +30,13 @@ public class ItemRequestController {
 
     @GetMapping
     public List<ItemRequestWithAnswersDto> getUserRequests(
-            @RequestHeader(AppConstants.UserIdHeader) long userId) {
+            @RequestHeader(AppConstants.USER_ID_HEADER) long userId) {
         log.info("От пользователя {} получен запрос GET /requests", userId);
         return itemRequestService.getAllForUser(userId);
     }
 
     @GetMapping("/all")
-    public List<ItemRequestDto> getAllItemsRequests(@RequestHeader(AppConstants.UserIdHeader) long userId) {
+    public List<ItemRequestDto> getAllItemsRequests(@RequestHeader(AppConstants.USER_ID_HEADER) long userId) {
         log.info("От пользователя {} получен запрос GET /requests/all", userId);
         return itemRequestService.getAllForOtherUsers(userId);
     }

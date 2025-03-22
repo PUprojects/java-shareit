@@ -22,26 +22,26 @@ public class RequestController {
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<Object> addNewRequest(@Valid @RequestBody ItemRequestDto newItemRequestDto,
-                                                @RequestHeader(AppConstants.UserIdHeader) long userId) {
+                                                @RequestHeader(AppConstants.USER_ID_HEADER) long userId) {
         log.info("От пользователя {} получен запрос POST /requests: {}", userId, newItemRequestDto);
         return requestClient.add(userId, newItemRequestDto);
     }
 
     @GetMapping
     public ResponseEntity<Object> getUserRequests(
-            @RequestHeader(AppConstants.UserIdHeader) long userId) {
+            @RequestHeader(AppConstants.USER_ID_HEADER) long userId) {
         log.info("От пользователя {} получен запрос GET /requests", userId);
         return requestClient.getAllForUser(userId);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> getAllItemsRequests(@RequestHeader(AppConstants.UserIdHeader) long userId) {
+    public ResponseEntity<Object> getAllItemsRequests(@RequestHeader(AppConstants.USER_ID_HEADER) long userId) {
         log.info("От пользователя {} получен запрос GET /requests/all", userId);
         return requestClient.getAllForOtherUsers(userId);
     }
 
     @GetMapping("/{requestId}")
-    public ResponseEntity<Object> getItemRequestById(@RequestHeader(AppConstants.UserIdHeader) long userId,
+    public ResponseEntity<Object> getItemRequestById(@RequestHeader(AppConstants.USER_ID_HEADER) long userId,
                                                      @PathVariable long requestId) {
         log.info("От получен запрос GET /requests/{}", requestId);
         return requestClient.getById(userId, requestId);

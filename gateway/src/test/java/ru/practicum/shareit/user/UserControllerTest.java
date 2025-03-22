@@ -77,7 +77,7 @@ class UserControllerTest {
         RequestBuilder request = get("/users")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -103,7 +103,7 @@ class UserControllerTest {
         RequestBuilder request = get("/users/1")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -126,7 +126,7 @@ class UserControllerTest {
         RequestBuilder request = post("/users")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L)
+                .header(AppConstants.USER_ID_HEADER, 2L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(users.getFirst()));
 
@@ -149,7 +149,7 @@ class UserControllerTest {
         RequestBuilder request = post("/users")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L)
+                .header(AppConstants.USER_ID_HEADER, 2L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(inputBadUser));
 

@@ -5,5 +5,5 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AppConstants {
-    public static final String UserIdHeader = "X-Sharer-User-Id";
+    public static final String USER_ID_HEADER = "X-Sharer-User-Id";
 }

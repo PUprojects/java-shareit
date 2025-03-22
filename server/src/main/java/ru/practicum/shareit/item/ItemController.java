@@ -22,7 +22,7 @@ public class ItemController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ItemDto create(@RequestBody ItemDto itemDto,
-                          @RequestHeader(AppConstants.UserIdHeader) long userId) {
+                          @RequestHeader(AppConstants.USER_ID_HEADER) long userId) {
         log.info("От пользователя {} получен запрос POST /items: {}", userId, itemDto);
         return itemService.create(userId, itemDto);
     }
@@ -30,26 +30,26 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     public ItemDto update(@RequestBody ItemDto itemDto,
                           @PathVariable long itemId,
-                          @RequestHeader(AppConstants.UserIdHeader) long userId) {
+                          @RequestHeader(AppConstants.USER_ID_HEADER) long userId) {
         log.info("От пользователя {} получен запрос PATCH /items/{}: {}", userId, itemId, itemDto);
         return itemService.update(userId, itemId, itemDto);
     }
 
     @GetMapping("/{itemId}")
     public ItemWithBookingAndCommentsDto get(@PathVariable long itemId,
-                                             @RequestHeader(AppConstants.UserIdHeader) long userId) {
+                                             @RequestHeader(AppConstants.USER_ID_HEADER) long userId) {
         log.info("От пользователя {} получен запрос GET /items/{}", userId, itemId);
         return itemService.getByIdWithBookingsAndComments(itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllByUser(@RequestHeader(AppConstants.UserIdHeader) long userId) {
+    public List<ItemDto> getAllByUser(@RequestHeader(AppConstants.USER_ID_HEADER) long userId) {
         log.info("От пользователя {} получен запрос GET /items", userId);
         return itemService.getAllByUser(userId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItemsForBooking(@RequestHeader(AppConstants.UserIdHeader) long userId,
+    public List<ItemDto> searchItemsForBooking(@RequestHeader(AppConstants.USER_ID_HEADER) long userId,
                                                @RequestParam("text") String text) {
         log.info("От пользователя {} получен запрос GET /items/search с параметром поиска = {}", userId, text);
         return itemService.searchAvailable(text);
@@ -59,7 +59,7 @@ public class ItemController {
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto addComment(@PathVariable long itemId,
                                  @RequestBody NewCommentDto comment,
-                                 @RequestHeader(AppConstants.UserIdHeader) long userId) {
+                                 @RequestHeader(AppConstants.USER_ID_HEADER) long userId) {
         log.info("От пользователя {} получен запрос POST /items/{}/comment: {}", userId, itemId, comment);
 
         return itemService.addComment(itemId, userId, comment.text());

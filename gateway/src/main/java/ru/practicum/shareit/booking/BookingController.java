@@ -26,7 +26,7 @@ public class BookingController {
 	private final BookingClient bookingClient;
 
 	@PostMapping
-	public ResponseEntity<Object> bookItem(@RequestHeader(AppConstants.UserIdHeader) long userId,
+	public ResponseEntity<Object> bookItem(@RequestHeader(AppConstants.USER_ID_HEADER) long userId,
 										   @RequestBody @Valid BookItemRequestDto requestDto) {
 		log.info("Creating booking {}, userId={}", requestDto, userId);
 		return bookingClient.bookItem(userId, requestDto);
@@ -35,20 +35,20 @@ public class BookingController {
 	@PatchMapping("/{bookingId}")
 	public ResponseEntity<Object> approve(@PathVariable("bookingId") long bookingId,
 										  @RequestParam(value = "approved") boolean isApproved,
-										  @RequestHeader(AppConstants.UserIdHeader) long userId) {
+										  @RequestHeader(AppConstants.USER_ID_HEADER) long userId) {
 		log.info("От пользователя {} получен запрос PATCH /bookings/{}?approved={}", userId, bookingId, isApproved);
 		return bookingClient.approve(userId, bookingId, isApproved);
 	}
 
 	@GetMapping("/{bookingId}")
-	public ResponseEntity<Object> getBooking(@RequestHeader(AppConstants.UserIdHeader) long userId,
+	public ResponseEntity<Object> getBooking(@RequestHeader(AppConstants.USER_ID_HEADER) long userId,
 											 @PathVariable Long bookingId) {
 		log.info("Get booking {}, userId={}", bookingId, userId);
 		return bookingClient.getBooking(userId, bookingId);
 	}
 
 	@GetMapping
-	public ResponseEntity<Object> getBookings(@RequestHeader(AppConstants.UserIdHeader) long userId,
+	public ResponseEntity<Object> getBookings(@RequestHeader(AppConstants.USER_ID_HEADER) long userId,
 			@RequestParam(name = "state", defaultValue = "all") String stateParam,
 											  @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
 											  @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
@@ -59,7 +59,7 @@ public class BookingController {
 	}
 
 	@GetMapping("/owner")
-	public ResponseEntity<Object> getByOwnerAndState(@RequestHeader(AppConstants.UserIdHeader) long userId,
+	public ResponseEntity<Object> getByOwnerAndState(@RequestHeader(AppConstants.USER_ID_HEADER) long userId,
 													 @RequestParam(value = "state", required = false, defaultValue = "ALL") String stateParam) {
 		log.info("От пользователя {} получен запрос GET /bookings/owner?state={}", userId, stateParam);
 		BookingState state = BookingState.from(stateParam)

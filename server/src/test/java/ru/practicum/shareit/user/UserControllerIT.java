@@ -46,7 +46,7 @@ class UserControllerIT {
         RequestBuilder request = get("/users")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -72,7 +72,7 @@ class UserControllerIT {
         RequestBuilder request = get("/users/1")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -95,7 +95,7 @@ class UserControllerIT {
         RequestBuilder request = post("/users")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L)
+                .header(AppConstants.USER_ID_HEADER, 2L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(users.getFirst()));
 
@@ -120,7 +120,7 @@ class UserControllerIT {
         RequestBuilder request = patch("/users/2")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L)
+                .header(AppConstants.USER_ID_HEADER, 2L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(users.getFirst()));
 
@@ -141,7 +141,7 @@ class UserControllerIT {
     void shouldDeleteUser() throws Exception {
         RequestBuilder request = delete("/users/4")
                 .characterEncoding(StandardCharsets.UTF_8)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isNoContent());

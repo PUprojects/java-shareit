@@ -76,7 +76,7 @@ class RequestControllerTest {
         RequestBuilder request = post("/requests")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L)
+                .header(AppConstants.USER_ID_HEADER, 2L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requests.getFirst()));
 
@@ -112,7 +112,7 @@ class RequestControllerTest {
         RequestBuilder request = post("/requests")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L)
+                .header(AppConstants.USER_ID_HEADER, 2L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(inputBadRequest));
 
@@ -131,7 +131,7 @@ class RequestControllerTest {
         RequestBuilder request = get("/requests")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -166,7 +166,7 @@ class RequestControllerTest {
         RequestBuilder request = get("/requests/all")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -201,7 +201,7 @@ class RequestControllerTest {
         RequestBuilder request = get("/requests/3")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())

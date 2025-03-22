@@ -66,7 +66,7 @@ class BookingControllerTest {
         RequestBuilder request = post("/bookings")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 1L)
+                .header(AppConstants.USER_ID_HEADER, 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(bookings.getFirst()));
 
@@ -90,7 +90,7 @@ class BookingControllerTest {
         RequestBuilder request = post("/bookings")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L)
+                .header(AppConstants.USER_ID_HEADER, 2L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(badRequest));
 
@@ -109,7 +109,7 @@ class BookingControllerTest {
         RequestBuilder request = patch("/bookings/5?approved=true")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -142,7 +142,7 @@ class BookingControllerTest {
         RequestBuilder request = get("/bookings/4")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -176,7 +176,7 @@ class BookingControllerTest {
         RequestBuilder request = get("/bookings?from=5&size=15")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -200,7 +200,7 @@ class BookingControllerTest {
         RequestBuilder request = get(uriTemplate)
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isBadRequest());
@@ -217,7 +217,7 @@ class BookingControllerTest {
         RequestBuilder request = get("/bookings/owner")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -236,7 +236,7 @@ class BookingControllerTest {
         RequestBuilder request = get("/bookings/owner?state=NONE")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isBadRequest());

@@ -57,7 +57,7 @@ class BookingControllerIT {
         RequestBuilder request = post("/bookings")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 1L)
+                .header(AppConstants.USER_ID_HEADER, 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(newBookingDto));
 
@@ -84,7 +84,7 @@ class BookingControllerIT {
         RequestBuilder request = patch("/bookings/2?approved=true")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 7L);
+                .header(AppConstants.USER_ID_HEADER, 7L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -110,7 +110,7 @@ class BookingControllerIT {
         RequestBuilder request = get("/bookings/2")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 4L);
+                .header(AppConstants.USER_ID_HEADER, 4L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -136,7 +136,7 @@ class BookingControllerIT {
         RequestBuilder request = get("/bookings")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -158,7 +158,7 @@ class BookingControllerIT {
         RequestBuilder request = get("/bookings/owner")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 2L);
+                .header(AppConstants.USER_ID_HEADER, 2L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())

@@ -50,7 +50,7 @@ class ItemControllerIT {
         RequestBuilder request = post("/items")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 1L)
+                .header(AppConstants.USER_ID_HEADER, 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(items.getFirst()));
 
@@ -77,7 +77,7 @@ class ItemControllerIT {
         RequestBuilder request = patch("/items/1")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 1L)
+                .header(AppConstants.USER_ID_HEADER, 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(items.getFirst()));
 
@@ -107,7 +107,7 @@ class ItemControllerIT {
         RequestBuilder request = get("/items/2")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 1L);
+                .header(AppConstants.USER_ID_HEADER, 1L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -135,7 +135,7 @@ class ItemControllerIT {
         RequestBuilder request = get("/items")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 1L);
+                .header(AppConstants.USER_ID_HEADER, 1L);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -175,7 +175,7 @@ class ItemControllerIT {
         RequestBuilder request = post("/items/1/comment")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(AppConstants.UserIdHeader, 1L)
+                .header(AppConstants.USER_ID_HEADER, 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(newCommentDto));
 
